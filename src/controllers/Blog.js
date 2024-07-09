@@ -34,19 +34,14 @@ const createBlog = async (req, res) => {
 const getAllBlogs = async (req, res) => {
   const page = parseInt(req.query.skip) || 0;
   const limit = parseInt(req.query.limit) || 6; 
-  const { state, author } = req.query;
-  
-  const query = state ? { state } : {}; 
-
  
-
   try {
-    const totalPosts = await Blog.countDocuments(query);
-    const blogs = await Blog.find(query)
+    const blogs = await Blog.find()
       .sort({ createdAt: -1 })
       .skip(page * limit) 
       .limit(limit)
-    
+
+      const totalPosts = blogs.length;
 
     res.json({
       totalPages: Math.ceil(totalPosts / limit),
@@ -54,8 +49,8 @@ const getAllBlogs = async (req, res) => {
       blogs
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch blogs', error: error.message });
-  }
+    res.status(500).json({ message: 'Failed to fetch blogs', error: error.message });
+  }
 };
 
 // Get a blog post by ID
